@@ -1,0 +1,6 @@
+name: CreeperKits
+main: vip.creeper.mcserverplugins.creeperkits.CreeperKits
+author: July_ss
+version: 1.0.0
+commands:
+  ckit:
