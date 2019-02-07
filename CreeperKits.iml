@@ -10,11 +10,11 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../java_api/minecraft/spigot/spigot-1.8.8-R0.1-SNAPSHOT.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../java_api/minecraft/spigot/spigot-latest.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="jar://$MODULE_DIR$/../../../java_api/minecraft/spigot/spigot-1.8.8-R0.1-SNAPSHOT.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../java_api/minecraft/spigot/spigot-latest.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>

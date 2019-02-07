@@ -4,10 +4,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import vip.creeper.mcserverplugins.creeperkits.CreeperKits;
-import vip.creeper.mcserverplugins.creeperkits.managers.CacheKitManager;
 import vip.creeper.mcserverplugins.creeperkits.managers.KitManager;
-import vip.creeper.mcserverplugins.creeperkits.untils.ItemUtil;
-import vip.creeper.mcserverplugins.creeperkits.untils.MsgUtil;
+import vip.creeper.mcserverplugins.creeperkits.utils.ItemUtil;
+import vip.creeper.mcserverplugins.creeperkits.utils.MsgUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,11 +16,9 @@ import java.util.List;
  */
 public class KitCreateCommand implements KitCommand {
     private KitManager kitManager;
-    private CacheKitManager cacheKitManager;
 
     public KitCreateCommand(CreeperKits plugin) {
         this.kitManager = plugin.getKitManager();
-        this.cacheKitManager = plugin.getCacheKitManager();
     }
 
     @Override
@@ -37,10 +34,15 @@ public class KitCreateCommand implements KitCommand {
         if (argsLen >= 2 && args[0].equalsIgnoreCase("create")) {
             String kitName = args[1];
 
-            if (kitManager.isExistsKit(kitName)) {
+            if (kitManager.existKit(kitName)) {
                 MsgUtil.sendMsg(cs, "&cKit &e" + kitName + " &c已存在.");
                 return true;
             }
+
+/*            if (!kitManager.isValidName(kitName)) {
+                MsgUtil.sendMsg(cs, "&cKit名不能有非法字符.");
+                return true;
+            }*/
 
             if (args.length == 2) {
                 List<ItemStack> items = new ArrayList<>();
@@ -56,16 +58,12 @@ public class KitCreateCommand implements KitCommand {
                     return true;
                 }
 
-                boolean result = kitManager.createKit(kitName, items);
-
-                if (result) {
-                    // 载入到cache
-                    cacheKitManager.getOrLoadCacheKit(kitName);
+                if (kitManager.createKit(kitName, items)) {
                     MsgUtil.sendMsg(cs, "&b创建 &e" + kitName + " &b成功.");
-                    return true;
+                } else {
+                    MsgUtil.sendMsg(cs, "&c创建 &e" + kitName + " &c失败.");
                 }
 
-                MsgUtil.sendMsg(cs, "&c创建 &e" + kitName + " &c失败.");
                 return true;
             }
 
@@ -81,16 +79,12 @@ public class KitCreateCommand implements KitCommand {
 
                 items.add(handItem);
 
-                boolean result = kitManager.createKit(kitName, items);
-
-                if (result) {
-                    // 载入Cache
-                    cacheKitManager.getOrLoadCacheKit(kitName);
+                if (kitManager.createKit(kitName, items)) {
                     MsgUtil.sendMsg(cs, "&b创建 &e" + kitName + " &b成功(单手持物品)!");
-                    return true;
+                } else {
+                    MsgUtil.sendMsg(cs, "&c创建 &e" + kitName + " &c失败.");
                 }
 
-                MsgUtil.sendMsg(cs, "&c创建 &e" + kitName + " &c失败.");
                 return true;
             }
         }
@@ -100,6 +94,6 @@ public class KitCreateCommand implements KitCommand {
 
     @Override
     public String getUsage() {
-        return "create <Kit名> [hand]";
+        return "create <Kit名> [hand] - 创建Kit";
     }
 }

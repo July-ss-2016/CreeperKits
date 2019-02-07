@@ -4,7 +4,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import vip.creeper.mcserverplugins.creeperkits.untils.MsgUtil;
+import vip.creeper.mcserverplugins.creeperkits.utils.MsgUtil;
 
 import java.util.HashMap;
 
@@ -22,13 +22,13 @@ public class KitCommandExecutor implements CommandExecutor {
         cmds.put(firstArg.toLowerCase(), cmd);
     }
 
-    public boolean onCommand(CommandSender cs, Command cmd, String lable, String[] args) {
+    public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
         if (!cs.hasPermission("CreeperKits.admin")) {
             MsgUtil.sendMsg(cs, "&c无权限! ");
             return true;
         }
 
-        if (args.length >=1) {
+        if (args.length >= 1) {
             String lowerFirstArg = args[0].toLowerCase();
 
             if (cmds.containsKey(lowerFirstArg)) {
@@ -48,7 +48,7 @@ public class KitCommandExecutor implements CommandExecutor {
         }
 
         MsgUtil.sendMsg(cs, "&c指令错误!");
-        MsgUtil.sendMsg(cs, "/ckit <create/remove/get/give/list> ...");
+        MsgUtil.sendMsg(cs, "/ckit <create/remove/aget/get/give/list/rename> ...");
         return true;
     }
 }

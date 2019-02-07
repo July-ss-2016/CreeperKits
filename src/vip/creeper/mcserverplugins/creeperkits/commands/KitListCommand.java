@@ -4,16 +4,17 @@ import org.bukkit.command.CommandSender;
 import vip.creeper.mcserverplugins.creeperkits.CreeperKits;
 import vip.creeper.mcserverplugins.creeperkits.Kit;
 import vip.creeper.mcserverplugins.creeperkits.managers.CacheKitManager;
-import vip.creeper.mcserverplugins.creeperkits.untils.MsgUtil;
+import vip.creeper.mcserverplugins.creeperkits.managers.KitManager;
+import vip.creeper.mcserverplugins.creeperkits.utils.MsgUtil;
 
 /**
  * Created by July on 2018/02/16.
  */
 public class KitListCommand implements KitCommand {
-    private CacheKitManager cacheKitManager;
+    private KitManager kitManager;
 
     public KitListCommand(CreeperKits plugin) {
-        this.cacheKitManager = plugin.getCacheKitManager();
+        this.kitManager = plugin.getKitManager();
     }
 
     @Override
@@ -25,8 +26,8 @@ public class KitListCommand implements KitCommand {
     public boolean onCommand(CommandSender cs, String[] args) {
         MsgUtil.sendMsgWithoutPrefix(cs, "Kits: ");
 
-        for (Kit kit : cacheKitManager.getCacheKits()) {
-            MsgUtil.sendMsgWithoutPrefix(cs, "- " + kit.getName());
+        for (String kitName : kitManager.getKitNames()) {
+            MsgUtil.sendMsgWithoutPrefix(cs, "- " + kitName);
         }
 
         return true;
@@ -34,6 +35,6 @@ public class KitListCommand implements KitCommand {
 
     @Override
     public String getUsage() {
-        return null;
+        return "list - 列出Kit";
     }
 }

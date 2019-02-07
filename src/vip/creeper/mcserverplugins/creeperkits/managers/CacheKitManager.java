@@ -1,11 +1,9 @@
 package vip.creeper.mcserverplugins.creeperkits.managers;
 
-import vip.creeper.mcserverplugins.creeperkits.CreeperKits;
 import vip.creeper.mcserverplugins.creeperkits.Kit;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by July on 2018/02/16.
@@ -14,8 +12,8 @@ public class CacheKitManager {
     private KitManager kitManager;
     private HashMap<String, Kit> caches = new HashMap<>();
 
-    public CacheKitManager(CreeperKits plugin) {
-        this.kitManager = plugin.getKitManager();
+    public CacheKitManager(KitManager kitManager) {
+        this.kitManager = kitManager;
     }
 
     public Kit getOrLoadCacheKit(String name) {
@@ -23,15 +21,15 @@ public class CacheKitManager {
             Kit kit = kitManager.getKit(name);
 
             if (kit != null) {
-                caches.put(name, kit);
+                caches.put(name.toLowerCase(), kit);
             }
         }
 
-        return caches.get(name);
+        return caches.get(name.toLowerCase());
     }
 
     public void removeKitFromCache(String name) {
-        caches.remove(name);
+        caches.remove(name.toLowerCase());
     }
 
     public Collection<Kit> getCacheKits() {
@@ -42,7 +40,7 @@ public class CacheKitManager {
         caches.clear();
 
         for (Kit kit : kitManager.getKits()) {
-            caches.put(kit.getName(), kit);
+            caches.put(kit.getName().toLowerCase(), kit);
         }
     }
 }

@@ -1,4 +1,4 @@
-package vip.creeper.mcserverplugins.creeperkits.untils;
+package vip.creeper.mcserverplugins.creeperkits.utils;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;

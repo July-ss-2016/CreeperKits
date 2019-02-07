@@ -6,7 +6,7 @@ import vip.creeper.mcserverplugins.creeperkits.CreeperKits;
 import vip.creeper.mcserverplugins.creeperkits.Kit;
 import vip.creeper.mcserverplugins.creeperkits.managers.CacheKitManager;
 import vip.creeper.mcserverplugins.creeperkits.managers.KitManager;
-import vip.creeper.mcserverplugins.creeperkits.untils.MsgUtil;
+import vip.creeper.mcserverplugins.creeperkits.utils.MsgUtil;
 
 /**
  * Created by July on 2018/02/16.
@@ -32,7 +32,7 @@ public class KitGetCommand implements KitCommand {
         if (args.length == 2) {
             String kitName = args[1];
 
-            if (!kitManager.isExistsKit(kitName)) {
+            if (!kitManager.existKit(kitName)) {
                 MsgUtil.sendMsg(cs, "&cKit &e" + kitName + " &c不存在.");
                 return true;
             }
@@ -45,7 +45,7 @@ public class KitGetCommand implements KitCommand {
             }
 
             kit.give(player);
-            MsgUtil.sendMsg(cs, "&bKit &e" + kitName + " &b已添加到你的背包!");
+            MsgUtil.sendMsg(cs, "&bKit &e" + kitName + " &b已添加到您的背包!");
             return true;
         }
 
@@ -54,6 +54,6 @@ public class KitGetCommand implements KitCommand {
 
     @Override
     public String getUsage() {
-        return "get <Kit名>";
+        return "get <Kit名> - 得到Kit";
     }
 }

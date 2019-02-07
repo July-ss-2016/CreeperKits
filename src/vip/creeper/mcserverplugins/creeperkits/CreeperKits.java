@@ -23,6 +23,8 @@ public class CreeperKits extends JavaPlugin {
     private KitCommandExecutor kitCommandExecutor;
 
     public void onEnable() {
+        Bukkit.getConsoleSender().sendMessage("§c[" + getName() + "] 作者QQ: 884633197");
+        Bukkit.getConsoleSender().sendMessage("§c[" + getName() + "] 有偿接各类MC插件定制");
         instance = this;
         this.settings = new Settings();
 
@@ -31,7 +33,9 @@ public class CreeperKits extends JavaPlugin {
         this.sqLiteManager = new SQLiteManager("plugins/CreeperKits", settings.getDatabase());
         this.kitCommandExecutor = new KitCommandExecutor();
         this.kitManager = new KitManager(this);
-        this.cacheKitManager = new CacheKitManager(this);
+        this.cacheKitManager = new CacheKitManager(kitManager);
+
+        kitManager.init();
 
         if (!sqLiteManager.connect()) {
             warring("初始化失败: SQLite 连接失败!");
@@ -55,11 +59,12 @@ public class CreeperKits extends JavaPlugin {
             getCommand("ckit").setExecutor(kitCommandExecutor);
             registerCmds();
         }));
-
-        info("初始化完毕!");
     }
 
     public void onDisable() {
+        Bukkit.getConsoleSender().sendMessage("§c[" + getName() + "] 作者QQ: 884633197");
+        Bukkit.getConsoleSender().sendMessage("§c[" + getName() + "] 有偿接各类MC插件定制");
+
         if (sqLiteManager.isConnected()) {
             sqLiteManager.disconnect();
         }
@@ -68,9 +73,11 @@ public class CreeperKits extends JavaPlugin {
     private void registerCmds() {
         kitCommandExecutor.registerCmd("create", new KitCreateCommand(this));
         kitCommandExecutor.registerCmd("get", new KitGetCommand(this));
+        kitCommandExecutor.registerCmd("aget", new KitGetWithoutReplaceVariablesCommand(this));
         kitCommandExecutor.registerCmd("give", new KitGiveCommand(this));
         kitCommandExecutor.registerCmd("list", new KitListCommand(this));
         kitCommandExecutor.registerCmd("remove", new KitRemoveCommand(this));
+        kitCommandExecutor.registerCmd("rename", new KitRenameCommand(this));
     }
 
     public SQLiteManager getSqLiteManager() {

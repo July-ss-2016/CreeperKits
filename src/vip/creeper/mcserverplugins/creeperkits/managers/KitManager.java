@@ -19,26 +19,51 @@ import java.util.List;
  * Created by July on 2018/2/14.
  */
 public class KitManager {
+    private CreeperKits plugin;
     private SQLiteManager sqLiteManager;
+    private CacheKitManager cacheKitManager;
 
     public KitManager(CreeperKits plugin) {
+        this.plugin = plugin;
+    }
+
+    public void init() {
+        this.cacheKitManager = plugin.getCacheKitManager();
         this.sqLiteManager = plugin.getSqLiteManager();
     }
 
-    public boolean removeKit(String name) {
-        try {
-            PreparedStatement statement = sqLiteManager.getCon().prepareStatement("delete from kits where name = '" + name + "'");
-
-            return statement.executeUpdate() == 1;
-        } catch (SQLException e) {
-            e.printStackTrace();
+    public boolean renameKit(String name, String newName) {
+        if (!existKit(name)) {
             return false;
         }
+
+        if (sqLiteManager.executeStatement("update kits set name = '" + newName.toLowerCase() + "' where name = '" + name.toLowerCase() + "'")) {
+            cacheKitManager.removeKitFromCache(name);
+            cacheKitManager.getOrLoadCacheKit(newName);
+            return true;
+        }
+
+        return false;
+    }
+
+    public boolean removeKit(String name)  {
+        try {
+            PreparedStatement statement = sqLiteManager.getCon().prepareStatement("delete from kits where name = '" + name.toLowerCase() + "'");
+
+            if (statement.executeUpdate() == 1) {
+                cacheKitManager.removeKitFromCache(name);
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 
     public Kit getKit(String name) {
         try {
-            PreparedStatement statement = sqLiteManager.getCon().prepareStatement("select * from kits where name = '" + name + "'");
+            PreparedStatement statement = sqLiteManager.getCon().prepareStatement("select * from kits where name = '" + name.toLowerCase() + "'");
             ResultSet rs = statement.executeQuery();
 
             if (rs.next()) {
@@ -48,7 +73,6 @@ public class KitManager {
 
                 // 使用Bukkit专属的输入流进行转换
                 BukkitObjectInputStream bukkitItemsIS = new BukkitObjectInputStream(byteItemsIS);
-
                 objectItems = bukkitItemsIS.readObject();
 
                 // 关闭输入流
@@ -65,9 +89,14 @@ public class KitManager {
     }
 
     public boolean createKit(String name, List<ItemStack> items) {
+        if (existKit(name)) {
+            throw new IllegalArgumentException("该Kit名已存在!");
+        }
+
         ByteArrayOutputStream byteItemsOS = new ByteArrayOutputStream();
 
         try {
+            // 由普通的OS转到Bukkit专用的OS
             BukkitObjectOutputStream bukkitItemsOS = new BukkitObjectOutputStream(byteItemsOS);
 
             bukkitItemsOS.writeObject(items);
@@ -91,7 +120,7 @@ public class KitManager {
         return true;
     }
 
-    public boolean isExistsKit(String name) {
+    public boolean existKit(String name) {
         try {
             PreparedStatement statement = sqLiteManager.getCon().prepareStatement("select * from kits where name = '" + name.toLowerCase() + "'");
             ResultSet rs = statement.executeQuery();
@@ -106,18 +135,28 @@ public class KitManager {
         return false;
     }
 
-    public List<Kit> getKits() {
-        List<Kit> kits = new ArrayList<>();
+    public List<String> getKitNames() {
+        List<String> kitNames = new ArrayList<>();
 
         try {
             PreparedStatement statement = sqLiteManager.getCon().prepareStatement("select * from kits");
             ResultSet rs = statement.executeQuery();
 
-            if (rs.next()) {
-                kits.add(getKit(rs.getString("name")));
+            while (rs.next()) {
+                kitNames.add(rs.getString("name"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+
+        return kitNames;
+    }
+
+    public List<Kit> getKits() {
+        List<Kit> kits = new ArrayList<>();
+
+        for (String kitName : getKitNames()) {
+            kits.add(getKit(kitName));
         }
 
         return kits;
